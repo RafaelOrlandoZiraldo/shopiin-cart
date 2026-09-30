@@ -82,10 +82,10 @@ export function CheckoutPage({ onBack }: CheckoutPageProps) {
   }
 
   return (
-    <main className="min-h-screen bg-zinc-50 text-zinc-950">
+    <main className="min-h-screen bg-[var(--brand-light)] text-zinc-950">
       <section className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
         <button
-          className="w-fit rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm font-semibold text-zinc-800 shadow-sm"
+          className="w-fit rounded-xl border border-[var(--brand-border)] bg-white px-4 py-3 text-sm font-extrabold text-[#0f1f5c] shadow-sm"
           type="button"
           onClick={onBack}
         >
@@ -93,14 +93,14 @@ export function CheckoutPage({ onBack }: CheckoutPageProps) {
         </button>
 
         <header>
-          <p className="text-sm font-medium uppercase tracking-wide text-emerald-700">Checkout</p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-normal sm:text-4xl">
+          <p className="text-sm font-extrabold uppercase tracking-wide text-[#c1122f]">Checkout</p>
+          <h1 className="mt-2 text-3xl font-extrabold tracking-normal text-[#0f1f5c] sm:text-4xl">
             Finalizar compra
           </h1>
         </header>
 
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
-          <form className="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm" onSubmit={handleSubmit}>
+          <form className="rounded-[22px] border border-[var(--brand-border)] bg-white p-5 shadow-[var(--brand-shadow)]" onSubmit={handleSubmit}>
             <div className="grid gap-4 sm:grid-cols-2">
               <TextField label="Nombre" value={form.firstName} error={errors.firstName} onChange={(value) => updateField("firstName", value)} />
               <TextField label="Apellido" value={form.lastName} error={errors.lastName} onChange={(value) => updateField("lastName", value)} />
@@ -108,7 +108,7 @@ export function CheckoutPage({ onBack }: CheckoutPageProps) {
               <TextField label="Telefono" value={form.phone} onChange={(value) => updateField("phone", value)} />
             </div>
 
-            <h2 className="mt-8 text-lg font-semibold text-zinc-950">Direccion</h2>
+            <h2 className="mt-8 text-lg font-extrabold text-[#0f1f5c]">Direccion</h2>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               <div className="sm:col-span-2">
                 <TextField label="Direccion" value={form.line1} error={errors.line1} onChange={(value) => updateField("line1", value)} />
@@ -123,18 +123,18 @@ export function CheckoutPage({ onBack }: CheckoutPageProps) {
             </div>
 
             {checkout.isError ? (
-              <p className="mt-5 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+              <p className="mt-5 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm font-bold text-red-700">
                 No pudimos crear la orden. Revisa el carrito e intenta de nuevo.
               </p>
             ) : null}
             {orderMessage ? (
-              <p className="mt-5 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
+              <p className="mt-5 rounded-xl border border-[#0f1f5c]/20 bg-[#0f1f5c]/5 px-3 py-2 text-sm font-bold text-[#0f1f5c]">
                 {orderMessage}
               </p>
             ) : null}
 
             <button
-              className="mt-6 h-11 w-full rounded-md bg-emerald-700 px-4 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
+              className="mt-6 h-12 w-full rounded-xl bg-gradient-to-br from-[#c1122f] to-[#a90f29] px-4 text-sm font-extrabold text-white shadow-[var(--brand-shadow)] transition disabled:cursor-not-allowed disabled:opacity-60"
               type="submit"
               disabled={!canSubmit}
             >
@@ -142,25 +142,25 @@ export function CheckoutPage({ onBack }: CheckoutPageProps) {
             </button>
           </form>
 
-          <aside className="h-fit rounded-lg border border-zinc-200 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-semibold text-zinc-950">Resumen</h2>
+          <aside className="h-fit rounded-[22px] border border-[var(--brand-border)] bg-white p-5 shadow-[var(--brand-shadow)]">
+            <h2 className="text-lg font-extrabold text-[#0f1f5c]">Resumen</h2>
             {cart.isLoading ? (
-              <p className="mt-4 text-sm text-zinc-600">Cargando carrito.</p>
+              <p className="mt-4 text-sm text-[var(--brand-text)]">Cargando carrito.</p>
             ) : !cartData || cartData.items.length === 0 ? (
-              <p className="mt-4 text-sm text-zinc-600">Tu carrito esta vacio.</p>
+              <p className="mt-4 text-sm text-[var(--brand-text)]">Tu carrito esta vacio.</p>
             ) : (
               <div className="mt-4 flex flex-col gap-3">
                 {cartData.items.map((item) => (
                   <div key={item.id} className="flex justify-between gap-3 text-sm">
-                    <span className="text-zinc-600">{item.quantity} x Producto {item.productId}</span>
-                    <span className="font-semibold text-zinc-950">
+                    <span className="text-[var(--brand-text)]">{item.quantity} x Producto {item.productId}</span>
+                    <span className="font-extrabold text-[#0f1f5c]">
                       {currencyFormatter.format(item.lineTotalCents / 100)}
                     </span>
                   </div>
                 ))}
-                <div className="mt-3 flex justify-between border-t border-zinc-200 pt-4">
-                  <span className="font-medium text-zinc-700">Total</span>
-                  <span className="text-lg font-semibold text-zinc-950">
+                <div className="mt-3 flex justify-between border-t border-[var(--brand-border)] pt-4">
+                  <span className="font-bold text-[var(--brand-text)]">Total</span>
+                  <span className="text-lg font-extrabold text-[#c1122f]">
                     {currencyFormatter.format(cartData.subtotalCents / 100)}
                   </span>
                 </div>
@@ -187,10 +187,10 @@ function TextField({
   onChange: (value: string) => void;
 }) {
   return (
-    <label className="flex flex-col gap-2 text-sm font-medium text-zinc-700">
+    <label className="flex flex-col gap-2 text-sm font-bold text-[var(--brand-text)]">
       {label}
       <input
-        className="h-11 rounded-md border border-zinc-300 bg-white px-3 text-sm text-zinc-950 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
+        className="h-11 rounded-xl border border-[var(--brand-border)] bg-white px-3 text-sm text-zinc-950 outline-none focus:border-[#0f1f5c] focus:ring-2 focus:ring-[#0f1f5c]/15"
         type={type}
         value={value}
         onChange={(event) => onChange(event.target.value)}

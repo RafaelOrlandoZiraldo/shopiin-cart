@@ -2,10 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --brand-blue: #0f1f5c;
+  --brand-blue-2: #1a2f80;
+  --brand-red: #c1122f;
+  --brand-red-2: #a90f29;
+  --brand-light: #f4f7fb;
+  --brand-text: #334155;
+  --brand-border: #dbe2ea;
+  --brand-shadow: 0 14px 35px rgba(15, 23, 42, 0.12);
+}
+
 body {
   margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #0f172a;
+  background: #ffffff;
 }
 
 * {
   box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }

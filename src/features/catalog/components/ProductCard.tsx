@@ -15,8 +15,8 @@ const currencyFormatter = new Intl.NumberFormat("es-AR", {
 
 export function ProductCard({ product, onOpen, onAddToCart, adding }: ProductCardProps) {
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-sm">
-      <div className="flex aspect-[4/3] items-center justify-center bg-zinc-100">
+    <article className="flex h-full flex-col overflow-hidden rounded-[22px] border border-[#e7edf4] bg-white shadow-[var(--brand-shadow)]">
+      <div className="flex aspect-[4/3] items-center justify-center overflow-hidden bg-[#f4f7fb]">
         {product.imageUrl ? (
           <img
             className="h-full w-full object-cover"
@@ -25,30 +25,30 @@ export function ProductCard({ product, onOpen, onAddToCart, adding }: ProductCar
             loading="lazy"
           />
         ) : (
-          <span className="px-4 text-center text-sm font-medium text-zinc-500">
-            Imagen pendiente
+          <span className="grid h-full w-full place-items-center bg-gradient-to-br from-[#0f1f5c] to-[#c1122f] px-4 text-center text-sm font-bold text-white">
+            Distribuidora 87
           </span>
         )}
       </div>
-      <div className="flex flex-1 flex-col p-4">
-        <h2 className="text-base font-semibold text-zinc-950">{product.name}</h2>
-        <p className="mt-2 line-clamp-2 min-h-10 text-sm leading-5 text-zinc-600">
+      <div className="flex flex-1 flex-col p-[22px]">
+        <h2 className="text-lg font-bold text-[#0f1f5c]">{product.name}</h2>
+        <p className="mt-2 line-clamp-2 min-h-12 text-sm leading-6 text-[var(--brand-text)]">
           {product.description ?? "Sin descripcion disponible."}
         </p>
         <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-lg font-semibold text-emerald-800">
+          <p className="text-lg font-extrabold text-[#c1122f]">
             {currencyFormatter.format(product.priceCents / 100)}
           </p>
           <div className="flex gap-2">
             <button
-              className="h-10 flex-1 rounded-md border border-zinc-300 px-3 text-sm font-semibold text-zinc-800 transition hover:border-emerald-700 hover:text-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-100 sm:flex-none"
+              className="h-10 flex-1 rounded-xl border border-[var(--brand-border)] bg-white px-3 text-sm font-extrabold text-[#0f1f5c] transition hover:-translate-y-0.5 sm:flex-none"
               type="button"
               onClick={() => onOpen(product.id)}
             >
               Ver
             </button>
             <button
-              className="h-10 flex-1 rounded-md bg-emerald-700 px-3 text-sm font-semibold text-white transition hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-200 disabled:cursor-not-allowed disabled:opacity-60 sm:flex-none"
+              className="h-10 flex-1 rounded-xl bg-gradient-to-br from-[#c1122f] to-[#a90f29] px-3 text-sm font-extrabold text-white transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 sm:flex-none"
               type="button"
               disabled={adding}
               onClick={() => onAddToCart(product.id)}
