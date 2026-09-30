@@ -74,7 +74,7 @@ function CategoriesPanel({ admin }: { admin: ReturnType<typeof useAdminData> }) 
       </form>
       <div className="mt-4 divide-y divide-zinc-200">
         {(admin.categories.data ?? []).map((category) => (
-          <div key={category.id} className="flex items-center justify-between gap-3 py-3">
+          <div key={category.id} className="flex items-center justify-between gap-3 py-2">
             <span className="text-sm">{category.name} / {category.slug} / {category.active ? "activa" : "inactiva"}</span>
             <button className="text-sm font-semibold text-red-700" onClick={() => admin.deleteCategory.mutate(category.id)}>Eliminar</button>
           </div>
