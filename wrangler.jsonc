@@ -16,7 +16,7 @@
   "r2_buckets": [
     {
       "binding": "PRODUCT_IMAGES",
-      "bucket_name": "shopping-cart-products-dev"
+      "bucket_name": "shoppingcartr2"
     }
   ],
   "env": {
@@ -34,7 +34,7 @@
       "r2_buckets": [
         {
           "binding": "PRODUCT_IMAGES",
-          "bucket_name": "shopping-cart-products-prod"
+          "bucket_name": "shoppingcartr2"
         }
       ]
     },
@@ -52,7 +52,7 @@
       "r2_buckets": [
         {
           "binding": "PRODUCT_IMAGES",
-          "bucket_name": "shopping-cart-products-dev"
+          "bucket_name": "shoppingcartr2"
         }
       ]
     }
