@@ -1,9 +1,14 @@
 import { FormEvent, useState } from "react";
 import { useAdminData } from "../hooks/useAdminData";
-import type { AdminProduct } from "../types/admin";
+import type { AdminCategory, AdminProduct } from "../types/admin";
 
 type AdminPageProps = { onBack: () => void };
 type Tab = "categories" | "products" | "orders";
+type CategoryFormState = {
+  name: string;
+  slug: string;
+  active: boolean;
+};
 type ProductFormState = {
   categoryId: string;
   name: string;
@@ -15,6 +20,11 @@ type ProductFormState = {
 
 const tokenKey = "admin-token";
 const money = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
+const emptyCategoryForm: CategoryFormState = {
+  name: "",
+  slug: "",
+  active: true,
+};
 const emptyProductForm: ProductFormState = {
   categoryId: "",
   name: "",
@@ -95,27 +105,100 @@ export function AdminPage({ onBack }: AdminPageProps) {
 }
 
 function CategoriesPanel({ admin }: { admin: ReturnType<typeof useAdminData> }) {
-  const [name, setName] = useState("");
-  const [slug, setSlug] = useState("");
+  const [form, setForm] = useState<CategoryFormState>(emptyCategoryForm);
+  const [editingCategoryId, setEditingCategoryId] = useState<string | null>(null);
+  const categories = admin.categories.data ?? [];
+  const isEditing = editingCategoryId !== null;
+
+  function submit(event: FormEvent) {
+    event.preventDefault();
+    const body = toCategoryPayload(form);
+
+    if (editingCategoryId) {
+      admin.updateCategory.mutate(
+        { id: editingCategoryId, body },
+        { onSuccess: resetForm },
+      );
+      return;
+    }
+
+    admin.createCategory.mutate(
+      { ...body, active: true },
+      { onSuccess: resetForm },
+    );
+  }
+
+  function editCategory(category: AdminCategory) {
+    setEditingCategoryId(category.id);
+    setForm({
+      name: category.name,
+      slug: category.slug,
+      active: category.active,
+    });
+  }
+
+  function resetForm() {
+    setEditingCategoryId(null);
+    setForm(emptyCategoryForm);
+  }
+
   return (
     <section className="rounded-[22px] border border-[var(--brand-border)] bg-white p-5 shadow-[var(--brand-shadow)]">
-      <PanelTitle title="Categorias" detail="Organiza el catalogo visible en la tienda." />
-      <form className="grid gap-3 sm:grid-cols-[1fr_1fr_auto]" onSubmit={(event) => {
-        event.preventDefault();
-        admin.createCategory.mutate({ name, slug, active: true });
-        setName(""); setSlug("");
-      }}>
-        <input className="h-11 rounded-xl border border-[var(--brand-border)] px-3 outline-none focus:border-[#0f1f5c] focus:ring-2 focus:ring-[#0f1f5c]/15" placeholder="Nombre" value={name} onChange={(event) => setName(event.target.value)} />
-        <input className="h-11 rounded-xl border border-[var(--brand-border)] px-3 outline-none focus:border-[#0f1f5c] focus:ring-2 focus:ring-[#0f1f5c]/15" placeholder="slug" value={slug} onChange={(event) => setSlug(event.target.value)} />
-        <button className="rounded-xl bg-gradient-to-br from-[#c1122f] to-[#a90f29] px-4 text-sm font-extrabold text-white shadow-[var(--brand-shadow)]">Crear</button>
+      <PanelTitle
+        title="Categorias"
+        detail={isEditing ? "Edita la categoria seleccionada y guarda los cambios." : "Organiza el catalogo visible en la tienda."}
+      />
+      <form className="grid gap-3 sm:grid-cols-[1fr_1fr_auto]" onSubmit={submit}>
+        <input className="h-11 rounded-xl border border-[var(--brand-border)] px-3 outline-none focus:border-[#0f1f5c] focus:ring-2 focus:ring-[#0f1f5c]/15" placeholder="Nombre" value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} />
+        <input className="h-11 rounded-xl border border-[var(--brand-border)] px-3 outline-none focus:border-[#0f1f5c] focus:ring-2 focus:ring-[#0f1f5c]/15" placeholder="slug" value={form.slug} onChange={(event) => setForm({ ...form, slug: event.target.value })} />
+        <button className="rounded-xl bg-gradient-to-br from-[#c1122f] to-[#a90f29] px-4 text-sm font-extrabold text-white shadow-[var(--brand-shadow)]">
+          {isEditing ? "Guardar" : "Crear"}
+        </button>
       </form>
-      <div className="mt-4 divide-y divide-[var(--brand-border)]">
-        {(admin.categories.data ?? []).map((category) => (
-          <div key={category.id} className="flex items-center justify-between gap-3 py-2">
-            <span className="text-sm text-[var(--brand-text)]"><strong className="text-[#0f1f5c]">{category.name}</strong> / {category.slug} / {category.active ? "activa" : "inactiva"}</span>
-            <button className="text-sm font-extrabold text-[#c1122f]" onClick={() => admin.deleteCategory.mutate(category.id)}>Eliminar</button>
-          </div>
-        ))}
+      {isEditing ? (
+        <button className="mt-3 rounded-xl border border-[var(--brand-border)] px-4 py-2 text-sm font-extrabold text-[#0f1f5c]" type="button" onClick={resetForm}>
+          Cancelar edicion
+        </button>
+      ) : null}
+      <div className="mt-5 overflow-x-auto rounded-[18px] border border-[var(--brand-border)]">
+        <table className="min-w-[720px] w-full border-collapse text-left text-sm">
+          <thead className="bg-[#0f1f5c] text-white">
+            <tr>
+              <th className="px-4 py-3 font-extrabold">Categoria</th>
+              <th className="px-4 py-3 font-extrabold">Slug</th>
+              <th className="px-4 py-3 font-extrabold">Estado</th>
+              <th className="px-4 py-3 text-right font-extrabold">Acciones</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-[var(--brand-border)] bg-white">
+            {categories.length === 0 ? (
+              <tr>
+                <td className="px-4 py-6 text-center text-[var(--brand-text)]" colSpan={4}>
+                  Todavia no hay categorias cargadas.
+                </td>
+              </tr>
+            ) : (
+              categories.map((category) => (
+                <tr key={category.id} className={editingCategoryId === category.id ? "bg-[#0f1f5c]/5" : undefined}>
+                  <td className="px-4 py-3 font-extrabold text-[#0f1f5c]">{category.name}</td>
+                  <td className="px-4 py-3 text-[var(--brand-text)]">{category.slug}</td>
+                  <td className="px-4 py-3">
+                    <span className={`rounded-full px-3 py-1 text-xs font-extrabold ${category.active ? "bg-[#0f1f5c]/10 text-[#0f1f5c]" : "bg-[#c1122f]/10 text-[#c1122f]"}`}>
+                      {category.active ? "Activa" : "Inactiva"}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex justify-end gap-3">
+                      <button className="font-extrabold text-[#0f1f5c]" type="button" onClick={() => editCategory(category)}>Editar</button>
+                      <button className="font-extrabold text-[var(--brand-text)]" type="button" onClick={() => admin.updateCategory.mutate({ id: category.id, body: { active: !category.active } })}>{category.active ? "Desactivar" : "Activar"}</button>
+                      <button className="font-extrabold text-[#c1122f]" type="button" onClick={() => admin.deleteCategory.mutate(category.id)}>Eliminar</button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
     </section>
   );
@@ -291,6 +374,14 @@ function tabLabel(tab: Tab) {
   };
 
   return labels[tab];
+}
+
+function toCategoryPayload(form: CategoryFormState): Partial<AdminCategory> {
+  return {
+    name: form.name,
+    slug: form.slug,
+    active: form.active,
+  };
 }
 
 function toProductPayload(form: ProductFormState): Partial<AdminProduct> {

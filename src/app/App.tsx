@@ -2,6 +2,8 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { AdminPage } from "../features/admin/pages/AdminPage";
 import { CatalogPage } from "../features/catalog/pages/CatalogPage";
+import { ContactPage } from "../features/catalog/pages/ContactPage";
+import { HomePage } from "../features/catalog/pages/HomePage";
 import { ProductDetailPage } from "../features/catalog/pages/ProductDetailPage";
 import type { ProductFilters } from "../features/catalog/types/catalog";
 import { CartDrawer } from "../features/cart/components/CartDrawer";
@@ -57,7 +59,7 @@ function AppRoutes() {
   if (route.checkout) {
     return (
       <>
-        <CheckoutPage onBack={() => navigate("/")} />
+        <CheckoutPage onBack={() => navigate("/products")} />
         <CartDrawer
           open={cartOpen}
           onClose={() => setCartOpen(false)}
@@ -77,8 +79,48 @@ function AppRoutes() {
           productId={route.productId}
           adding={addingProductId === route.productId}
           cartItemCount={cartItemCount}
-          onBack={() => navigate("/")}
+          onBack={() => navigate("/products")}
           onAddToCart={addProductToCart}
+          onOpenCart={() => setCartOpen(true)}
+        />
+        <CartDrawer
+          open={cartOpen}
+          onClose={() => setCartOpen(false)}
+          onCheckout={() => {
+            setCartOpen(false);
+            navigate("/checkout");
+          }}
+        />
+      </>
+    );
+  }
+
+  if (route.contact) {
+    return (
+      <>
+        <ContactPage
+          cartItemCount={cartItemCount}
+          onNavigate={navigate}
+          onOpenCart={() => setCartOpen(true)}
+        />
+        <CartDrawer
+          open={cartOpen}
+          onClose={() => setCartOpen(false)}
+          onCheckout={() => {
+            setCartOpen(false);
+            navigate("/checkout");
+          }}
+        />
+      </>
+    );
+  }
+
+  if (!route.catalog) {
+    return (
+      <>
+        <HomePage
+          cartItemCount={cartItemCount}
+          onNavigate={navigate}
           onOpenCart={() => setCartOpen(true)}
         />
         <CartDrawer
@@ -103,6 +145,7 @@ function AppRoutes() {
         onFiltersChange={(filters) => navigate(buildCatalogUrl(filters))}
         onOpenProduct={(productId) => navigate(`/products/${productId}`)}
         onAddToCart={addProductToCart}
+        onNavigate={navigate}
         onOpenCart={() => setCartOpen(true)}
       />
       <CartDrawer
@@ -117,13 +160,22 @@ function AppRoutes() {
   );
 }
 
-function getRoute(): { admin?: boolean; checkout?: boolean; productId?: string; filters: ProductFilters } {
+function getRoute(): {
+  admin?: boolean;
+  checkout?: boolean;
+  contact?: boolean;
+  catalog?: boolean;
+  productId?: string;
+  filters: ProductFilters;
+} {
   const productMatch = window.location.pathname.match(/^\/products\/([^/]+)$/);
   const searchParams = new URLSearchParams(window.location.search);
 
   return {
     admin: window.location.pathname === "/admin",
     checkout: window.location.pathname === "/checkout",
+    contact: window.location.pathname === "/contact",
+    catalog: window.location.pathname === "/products",
     productId: productMatch?.[1],
     filters: {
       category: searchParams.get("category") || undefined,
@@ -154,7 +206,7 @@ function buildCatalogUrl(filters: ProductFilters): string {
   }
 
   const query = params.toString();
-  return query ? `/?${query}` : "/";
+  return query ? `/products?${query}` : "/products";
 }
 
 function positiveNumber(value: string | null, fallback: number): number {
