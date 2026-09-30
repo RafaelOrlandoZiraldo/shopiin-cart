@@ -1,11 +1,28 @@
 import { FormEvent, useState } from "react";
 import { useAdminData } from "../hooks/useAdminData";
+import type { AdminProduct } from "../types/admin";
 
 type AdminPageProps = { onBack: () => void };
 type Tab = "categories" | "products" | "orders";
+type ProductFormState = {
+  categoryId: string;
+  name: string;
+  description: string;
+  priceCents: number;
+  imageUrl: string;
+  active: boolean;
+};
 
 const tokenKey = "admin-token";
 const money = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
+const emptyProductForm: ProductFormState = {
+  categoryId: "",
+  name: "",
+  description: "",
+  priceCents: 0,
+  imageUrl: "",
+  active: true,
+};
 
 export function AdminPage({ onBack }: AdminPageProps) {
   const [token, setToken] = useState(() => sessionStorage.getItem(tokenKey) ?? "");
@@ -105,38 +122,135 @@ function CategoriesPanel({ admin }: { admin: ReturnType<typeof useAdminData> }) 
 }
 
 function ProductsPanel({ admin }: { admin: ReturnType<typeof useAdminData> }) {
-  const [form, setForm] = useState({ categoryId: "", name: "", description: "", priceCents: 0, imageUrl: "" });
+  const [form, setForm] = useState<ProductFormState>(emptyProductForm);
+  const [editingProductId, setEditingProductId] = useState<string | null>(null);
+  const products = admin.products.data ?? [];
+  const categories = admin.categories.data ?? [];
+  const isEditing = editingProductId !== null;
+
   function submit(event: FormEvent) {
     event.preventDefault();
-    admin.createProduct.mutate({ ...form, active: true, description: form.description || null, imageUrl: form.imageUrl || null });
+    const body = toProductPayload(form);
+
+    if (editingProductId) {
+      admin.updateProduct.mutate(
+        { id: editingProductId, body },
+        { onSuccess: resetForm },
+      );
+      return;
+    }
+
+    admin.createProduct.mutate(
+      { ...body, active: true },
+      { onSuccess: resetForm },
+    );
   }
+
+  function editProduct(product: AdminProduct) {
+    setEditingProductId(product.id);
+    setForm({
+      categoryId: product.categoryId,
+      name: product.name,
+      description: product.description ?? "",
+      priceCents: product.priceCents,
+      imageUrl: product.imageUrl ?? "",
+      active: product.active,
+    });
+  }
+
+  function resetForm() {
+    setEditingProductId(null);
+    setForm(emptyProductForm);
+  }
+
   return (
     <section className="rounded-[22px] border border-[var(--brand-border)] bg-white p-5 shadow-[var(--brand-shadow)]">
-      <PanelTitle title="Productos" detail="Carga productos, precios e imagenes para el catalogo." />
+      <PanelTitle
+        title="Productos"
+        detail={isEditing ? "Edita el producto seleccionado y guarda los cambios." : "Carga productos, precios e imagenes para el catalogo."}
+      />
       <form className="grid gap-3 lg:grid-cols-6" onSubmit={submit}>
         <select className="h-11 rounded-xl border border-[var(--brand-border)] px-3 outline-none focus:border-[#0f1f5c] focus:ring-2 focus:ring-[#0f1f5c]/15" value={form.categoryId} onChange={(event) => setForm({ ...form, categoryId: event.target.value })}>
           <option value="">Categoria</option>
-          {(admin.categories.data ?? []).map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}
+          {categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}
         </select>
         <input className="h-11 rounded-xl border border-[var(--brand-border)] px-3 outline-none focus:border-[#0f1f5c] focus:ring-2 focus:ring-[#0f1f5c]/15" placeholder="Nombre" value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} />
         <input className="h-11 rounded-xl border border-[var(--brand-border)] px-3 outline-none focus:border-[#0f1f5c] focus:ring-2 focus:ring-[#0f1f5c]/15" placeholder="Descripcion" value={form.description} onChange={(event) => setForm({ ...form, description: event.target.value })} />
         <input className="h-11 rounded-xl border border-[var(--brand-border)] px-3 outline-none focus:border-[#0f1f5c] focus:ring-2 focus:ring-[#0f1f5c]/15" type="number" placeholder="Centavos" value={form.priceCents} onChange={(event) => setForm({ ...form, priceCents: Number(event.target.value) })} />
         <input className="h-11 rounded-xl border border-[var(--brand-border)] px-3 outline-none focus:border-[#0f1f5c] focus:ring-2 focus:ring-[#0f1f5c]/15" placeholder="Imagen URL" value={form.imageUrl} onChange={(event) => setForm({ ...form, imageUrl: event.target.value })} />
-        <button className="rounded-xl bg-gradient-to-br from-[#c1122f] to-[#a90f29] px-4 text-sm font-extrabold text-white shadow-[var(--brand-shadow)]">Crear</button>
+        <button className="rounded-xl bg-gradient-to-br from-[#c1122f] to-[#a90f29] px-4 text-sm font-extrabold text-white shadow-[var(--brand-shadow)]">
+          {isEditing ? "Guardar" : "Crear"}
+        </button>
       </form>
+      {isEditing ? (
+        <button className="mt-3 rounded-xl border border-[var(--brand-border)] px-4 py-2 text-sm font-extrabold text-[#0f1f5c]" type="button" onClick={resetForm}>
+          Cancelar edicion
+        </button>
+      ) : null}
       <input className="mt-3 text-sm font-bold text-[var(--brand-text)] file:mr-3 file:rounded-xl file:border-0 file:bg-[#0f1f5c] file:px-4 file:py-2 file:text-sm file:font-extrabold file:text-white" type="file" accept="image/*" onChange={(event) => {
         const file = event.target.files?.[0];
         if (file) admin.uploadImage.mutate(file, { onSuccess: (result) => setForm((current) => ({ ...current, imageUrl: result.url })) });
       }} />
-      <div className="mt-4 divide-y divide-[var(--brand-border)]">
-        {(admin.products.data ?? []).map((product) => (
-          <div key={product.id} className="grid gap-3 py-3 text-sm lg:grid-cols-[1fr_auto_auto_auto] lg:items-center">
-            <span className="text-[var(--brand-text)]"><strong className="text-[#0f1f5c]">{product.name}</strong> / {money.format(product.priceCents / 100)} / {product.active ? "activo" : "inactivo"}</span>
-            <button className="font-extrabold text-[#0f1f5c]" onClick={() => admin.setProductActive.mutate({ id: product.id, active: !product.active })}>{product.active ? "Desactivar" : "Activar"}</button>
-            <button className="font-extrabold text-[var(--brand-text)]" onClick={() => admin.updateProduct.mutate({ id: product.id, body: { ...product, active: product.active } })}>Guardar</button>
-            <button className="font-extrabold text-[#c1122f]" onClick={() => admin.deleteProduct.mutate(product.id)}>Eliminar</button>
-          </div>
-        ))}
+      <div className="mt-5 overflow-x-auto rounded-[18px] border border-[var(--brand-border)]">
+        <table className="min-w-[920px] w-full border-collapse text-left text-sm">
+          <thead className="bg-[#0f1f5c] text-white">
+            <tr>
+              <th className="px-4 py-3 font-extrabold">Producto</th>
+              <th className="px-4 py-3 font-extrabold">Categoria</th>
+              <th className="px-4 py-3 font-extrabold">Precio</th>
+              <th className="px-4 py-3 font-extrabold">Imagen</th>
+              <th className="px-4 py-3 font-extrabold">Estado</th>
+              <th className="px-4 py-3 text-right font-extrabold">Acciones</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-[var(--brand-border)] bg-white">
+            {products.length === 0 ? (
+              <tr>
+                <td className="px-4 py-6 text-center text-[var(--brand-text)]" colSpan={6}>
+                  Todavia no hay productos cargados.
+                </td>
+              </tr>
+            ) : (
+              products.map((product) => (
+                <tr key={product.id} className={editingProductId === product.id ? "bg-[#0f1f5c]/5" : undefined}>
+                  <td className="px-4 py-3">
+                    <div className="font-extrabold text-[#0f1f5c]">{product.name}</div>
+                    <div className="mt-1 max-w-xs truncate text-xs text-[var(--brand-text)]">
+                      {product.description ?? "Sin descripcion"}
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 text-[var(--brand-text)]">
+                    {categoryName(categories, product.categoryId)}
+                  </td>
+                  <td className="px-4 py-3 font-extrabold text-[#c1122f]">
+                    {money.format(product.priceCents / 100)}
+                  </td>
+                  <td className="px-4 py-3">
+                    {product.imageUrl ? (
+                      <a className="font-bold text-[#0f1f5c] underline-offset-4 hover:underline" href={product.imageUrl} target="_blank" rel="noreferrer">
+                        Ver imagen
+                      </a>
+                    ) : (
+                      <span className="text-[var(--brand-text)]">Sin imagen</span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className={`rounded-full px-3 py-1 text-xs font-extrabold ${product.active ? "bg-[#0f1f5c]/10 text-[#0f1f5c]" : "bg-[#c1122f]/10 text-[#c1122f]"}`}>
+                      {product.active ? "Activo" : "Inactivo"}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex justify-end gap-3">
+                      <button className="font-extrabold text-[#0f1f5c]" type="button" onClick={() => editProduct(product)}>Editar</button>
+                      <button className="font-extrabold text-[var(--brand-text)]" type="button" onClick={() => admin.setProductActive.mutate({ id: product.id, active: !product.active })}>{product.active ? "Desactivar" : "Activar"}</button>
+                      <button className="font-extrabold text-[#c1122f]" type="button" onClick={() => admin.deleteProduct.mutate(product.id)}>Eliminar</button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
     </section>
   );
@@ -177,4 +291,19 @@ function tabLabel(tab: Tab) {
   };
 
   return labels[tab];
+}
+
+function toProductPayload(form: ProductFormState): Partial<AdminProduct> {
+  return {
+    categoryId: form.categoryId,
+    name: form.name,
+    description: form.description.trim() || null,
+    priceCents: form.priceCents,
+    imageUrl: form.imageUrl.trim() || null,
+    active: form.active,
+  };
+}
+
+function categoryName(categories: ReturnType<typeof useAdminData>["categories"]["data"], categoryId: string) {
+  return categories?.find((category) => category.id === categoryId)?.name ?? "Sin categoria";
 }
