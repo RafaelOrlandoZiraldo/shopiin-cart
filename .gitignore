@@ -1,6 +1,11 @@
 node_modules
 dist
 coverage
+docs
+prompt
+prompts
+agent.md
+AGENTS.md
 .dev.vars
 .dev.vars.*
 !.dev.vars.example
