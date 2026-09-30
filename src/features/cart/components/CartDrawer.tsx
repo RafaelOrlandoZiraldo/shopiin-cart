@@ -24,19 +24,19 @@ export function CartDrawer({ open, onClose, onCheckout }: CartDrawerProps) {
   return (
     <div className="fixed inset-0 z-50">
       <button
-        className="absolute inset-0 h-full w-full bg-zinc-950/40"
+        className="absolute inset-0 h-full w-full bg-[#0f1f5c]/45 backdrop-blur-sm"
         type="button"
         aria-label="Cerrar carrito"
         onClick={onClose}
       />
-      <aside className="absolute right-0 top-0 flex h-full w-full max-w-md flex-col bg-white shadow-xl">
-        <header className="flex items-center justify-between border-b border-zinc-200 px-5 py-4">
+      <aside className="absolute right-0 top-0 flex h-full w-full max-w-md flex-col bg-white shadow-[var(--brand-shadow)]">
+        <header className="flex items-center justify-between border-b border-[var(--brand-border)] bg-[#0f1f5c] px-5 py-4 text-white">
           <div>
-            <p className="text-sm font-medium uppercase tracking-wide text-emerald-700">Carrito</p>
-            <h2 className="text-xl font-semibold text-zinc-950">Tu compra</h2>
+            <p className="text-sm font-extrabold uppercase tracking-wide text-white/75">Carrito</p>
+            <h2 className="text-xl font-extrabold">Tu compra</h2>
           </div>
           <button
-            className="h-10 rounded-md border border-zinc-300 px-3 text-sm font-semibold text-zinc-800"
+            className="h-10 rounded-xl border border-white/30 px-3 text-sm font-extrabold text-white transition hover:bg-white/10"
             type="button"
             onClick={onClose}
           >
@@ -85,8 +85,8 @@ export function CartDrawer({ open, onClose, onCheckout }: CartDrawerProps) {
 function CartState({ title, detail }: { title: string; detail: string }) {
   return (
     <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
-      <h3 className="text-lg font-semibold text-zinc-950">{title}</h3>
-      <p className="mt-2 text-sm text-zinc-600">{detail}</p>
+      <h3 className="text-lg font-extrabold text-[#0f1f5c]">{title}</h3>
+      <p className="mt-2 text-sm text-[var(--brand-text)]">{detail}</p>
     </div>
   );
 }
