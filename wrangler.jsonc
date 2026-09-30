@@ -1,0 +1,60 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "shopping-cart",
+  "pages_build_output_dir": "dist",
+  "compatibility_date": "2026-09-01",
+  "vars": {
+    "APP_ENV": "dev"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "shopping-cart-dev",
+      "database_id": "REPLACE_WITH_DEV_D1_DATABASE_ID"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "PRODUCT_IMAGES",
+      "bucket_name": "shopping-cart-products-dev"
+    }
+  ],
+  "env": {
+    "production": {
+      "vars": {
+        "APP_ENV": "prod"
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "shopping-cart-prod",
+          "database_id": "REPLACE_WITH_PROD_D1_DATABASE_ID"
+        }
+      ],
+      "r2_buckets": [
+        {
+          "binding": "PRODUCT_IMAGES",
+          "bucket_name": "shopping-cart-products-prod"
+        }
+      ]
+    },
+    "preview": {
+      "vars": {
+        "APP_ENV": "dev"
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "shopping-cart-dev",
+          "database_id": "REPLACE_WITH_DEV_D1_DATABASE_ID"
+        }
+      ],
+      "r2_buckets": [
+        {
+          "binding": "PRODUCT_IMAGES",
+          "bucket_name": "shopping-cart-products-dev"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,26 @@
+# Checklist de produccion
+
+- [ ] D1 dev creado.
+- [ ] D1 prod creado.
+- [ ] Migraciones aplicadas en dev.
+- [ ] Migraciones aplicadas en prod.
+- [ ] R2 dev creado.
+- [ ] R2 prod creado.
+- [ ] `wrangler.jsonc` actualizado con `database_id` reales.
+- [ ] Bindings D1/R2 verificados en Cloudflare Pages preview.
+- [ ] Bindings D1/R2 verificados en Cloudflare Pages production.
+- [ ] Secrets configurados por entorno: `ADMIN_API_TOKEN`, `PAYMENT_PROVIDER_SECRET`, `PAYMENT_WEBHOOK_SECRET`.
+- [ ] Ningun secret real commiteado.
+- [ ] Production branch configurada como `main`.
+- [ ] Deploy preview probado desde `develop`.
+- [ ] Deploy production probado desde `main`.
+- [ ] Dominio configurado.
+- [ ] HTTPS activo.
+- [ ] Logs revisados.
+- [ ] Manejo de errores sin stack traces publicos.
+- [ ] Rate limiting configurado para admin, checkout y webhooks.
+- [ ] Webhook payment validado con firma del proveedor real.
+- [ ] Idempotencia de checkout y webhooks verificada.
+- [ ] Carrito probado en mobile.
+- [ ] Checkout probado end-to-end.
+- [ ] Backup/export de datos considerado.

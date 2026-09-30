@@ -1,0 +1,42 @@
+{
+  "name": "shopiin-cart",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "lint": "tsc -b",
+    "cf:types": "wrangler types",
+    "d1:migrate:local": "wrangler d1 migrations apply DB --local",
+    "d1:migrate:dev": "wrangler d1 migrations apply DB --remote",
+    "d1:migrate:prod": "wrangler d1 migrations apply DB --remote --env production",
+    "d1:seed:local": "wrangler d1 execute DB --local --file seeds/dev.sql",
+    "d1:seed:dev": "wrangler d1 execute DB --remote --file seeds/dev.sql",
+    "deploy:dev": "npm run build && wrangler pages deploy dist --project-name shopping-cart --branch=develop",
+    "deploy:prod": "npm run build && wrangler pages deploy dist --project-name shopping-cart --branch=main"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.59.16",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240925.0",
+    "@types/node": "^22.7.5",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.2",
+    "autoprefixer": "^10.4.20",
+    "jsdom": "^25.0.1",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.14",
+    "typescript": "^5.6.3",
+    "vite": "^8.3.1",
+    "vitest": "^5.0.3",
+    "wrangler": "^4.144.0"
+  }
+}

@@ -1,0 +1,6 @@
+CREATE TABLE RateLimits (
+  Key TEXT PRIMARY KEY,
+  WindowStart INTEGER NOT NULL,
+  Count INTEGER NOT NULL,
+  UpdatedAt TEXT NOT NULL
+);
