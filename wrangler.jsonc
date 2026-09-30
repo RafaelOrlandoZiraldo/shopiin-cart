@@ -9,8 +9,8 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "shopping-cart-dev",
-      "database_id": "REPLACE_WITH_DEV_D1_DATABASE_ID"
+      "database_name": "shoppingcartdb",
+      "database_id": "c3e11090-4d88-4c8b-a355-d08f9048c102"
     }
   ],
   "r2_buckets": [
@@ -27,8 +27,8 @@
       "d1_databases": [
         {
           "binding": "DB",
-          "database_name": "shopping-cart-prod",
-          "database_id": "REPLACE_WITH_PROD_D1_DATABASE_ID"
+          "database_name": "shoppingcartdb",
+          "database_id": "Rc3e11090-4d88-4c8b-a355-d08f9048c102"
         }
       ],
       "r2_buckets": [
@@ -45,8 +45,8 @@
       "d1_databases": [
         {
           "binding": "DB",
-          "database_name": "shopping-cart-dev",
-          "database_id": "REPLACE_WITH_DEV_D1_DATABASE_ID"
+          "database_name": "shoppingcartdb",
+          "database_id": "c3e11090-4d88-4c8b-a355-d08f9048c102"
         }
       ],
       "r2_buckets": [
