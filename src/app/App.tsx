@@ -181,7 +181,7 @@ function getRoute(): {
       category: searchParams.get("category") || undefined,
       search: searchParams.get("search") || undefined,
       page: positiveNumber(searchParams.get("page"), 1),
-      pageSize: positiveNumber(searchParams.get("pageSize"), 12),
+      pageSize: positiveNumber(searchParams.get("pageSize"), 6),
     },
   };
 }
@@ -201,7 +201,7 @@ function buildCatalogUrl(filters: ProductFilters): string {
     params.set("page", String(filters.page));
   }
 
-  if (filters.pageSize !== 12) {
+  if (filters.pageSize !== 6) {
     params.set("pageSize", String(filters.pageSize));
   }
 

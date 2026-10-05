@@ -15,7 +15,7 @@ export function ProductGrid({
   addingProductId,
 }: ProductGridProps) {
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid h-full min-h-0 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:grid-rows-2">
       {products.map((product) => (
         <ProductCard
           key={product.id}

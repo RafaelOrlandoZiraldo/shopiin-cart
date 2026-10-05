@@ -1,3 +1,4 @@
+import { Tags } from "lucide-react";
 import type { CategoryDto } from "../types/catalog";
 
 type CategoryFilterProps = {
@@ -9,10 +10,13 @@ type CategoryFilterProps = {
 
 export function CategoryFilter({ categories, value, disabled, onChange }: CategoryFilterProps) {
   return (
-    <label className="flex min-w-0 flex-col gap-2 text-sm font-bold text-[#0f1f5c]">
-      Categoria
+    <label className="flex min-w-0 flex-col gap-2 text-sm font-bold text-[#243a73]">
+      <span className="inline-flex items-center gap-2">
+        <Tags className="h-4 w-4" aria-hidden="true" />
+        Categoria
+      </span>
       <select
-        className="h-12 rounded-xl border border-[var(--brand-border)] bg-white px-3 text-sm text-zinc-950 outline-none transition focus:border-[#1a2f80] focus:ring-4 focus:ring-[#1a2f80]/10 disabled:cursor-not-allowed disabled:bg-zinc-100"
+        className="h-12 rounded-2xl border border-[var(--brand-border)] bg-white px-4 text-sm text-zinc-950 outline-none transition focus:border-[#365487] focus:ring-4 focus:ring-[#365487]/10 disabled:cursor-not-allowed disabled:bg-zinc-100"
         value={value ?? ""}
         disabled={disabled}
         onChange={(event) => onChange(event.target.value || undefined)}
