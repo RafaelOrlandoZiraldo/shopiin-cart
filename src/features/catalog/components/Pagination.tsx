@@ -18,18 +18,18 @@ export function Pagination({ page, pageSize, total, disabled, onPageChange }: Pa
       </p>
       <div className="flex items-center gap-2">
         <button
-          className="h-10 rounded-xl border border-[var(--brand-border)] bg-white px-3 text-sm font-bold text-[#0f1f5c] disabled:cursor-not-allowed disabled:opacity-50"
+          className="h-10 rounded-xl border border-[var(--brand-border)] bg-white px-3 text-sm font-bold text-[#243a73] disabled:cursor-not-allowed disabled:opacity-50"
           type="button"
           disabled={disabled || page <= 1}
           onClick={() => onPageChange(page - 1)}
         >
           Anterior
         </button>
-        <span className="min-w-20 text-center text-sm font-bold text-[#0f1f5c]">
+        <span className="min-w-20 text-center text-sm font-bold text-[#243a73]">
           {page} / {totalPages}
         </span>
         <button
-          className="h-10 rounded-xl border border-[var(--brand-border)] bg-white px-3 text-sm font-bold text-[#0f1f5c] disabled:cursor-not-allowed disabled:opacity-50"
+          className="h-10 rounded-xl border border-[var(--brand-border)] bg-white px-3 text-sm font-bold text-[#243a73] disabled:cursor-not-allowed disabled:opacity-50"
           type="button"
           disabled={disabled || page >= totalPages}
           onClick={() => onPageChange(page + 1)}
