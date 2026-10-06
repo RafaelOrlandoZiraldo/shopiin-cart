@@ -5,6 +5,7 @@ import type { PaymentWebhookDto } from "../../application/payments/dtos";
 type MercadoPagoWebhookBody = {
   id?: string | number;
   action?: string;
+  live_mode?: boolean;
   type?: string;
   data?: {
     id?: string | number;
@@ -49,6 +50,22 @@ export async function parseMercadoPagoWebhook(input: {
     status: mapMercadoPagoStatus(payment.status),
     amountCents: Math.round((payment.transaction_amount ?? 0) * 100),
   };
+}
+
+export function isMercadoPagoWebhookConnectivityTest(body: unknown): boolean {
+  if (!body || typeof body !== "object") {
+    return false;
+  }
+
+  const mercadoPagoBody = body as MercadoPagoWebhookBody;
+
+  return (
+    mercadoPagoBody.action === "payment.updated" &&
+    mercadoPagoBody.type === "payment" &&
+    mercadoPagoBody.live_mode === false &&
+    String(mercadoPagoBody.id) === "123456" &&
+    String(mercadoPagoBody.data?.id) === "123456"
+  );
 }
 
 async function validateMercadoPagoSignature(input: {
