@@ -89,8 +89,14 @@ Configurar secrets por entorno en Cloudflare Pages, no en el repositorio:
 
 ```bash
 npx wrangler pages secret put ADMIN_API_TOKEN --project-name shopping-cart
+npx wrangler pages secret put PAYMENT_PROVIDER --project-name shopping-cart
 npx wrangler pages secret put PAYMENT_PROVIDER_SECRET --project-name shopping-cart
 npx wrangler pages secret put PAYMENT_WEBHOOK_SECRET --project-name shopping-cart
+npx wrangler pages secret put MERCADOPAGO_ACCESS_TOKEN --project-name shopping-cart
+npx wrangler pages secret put MERCADOPAGO_WEBHOOK_SECRET --project-name shopping-cart
+npx wrangler pages secret put MERCADOPAGO_NOTIFICATION_URL --project-name shopping-cart
+npx wrangler pages secret put MERCADOPAGO_BACK_URL_BASE --project-name shopping-cart
+npx wrangler pages secret put MERCADOPAGO_STATEMENT_DESCRIPTOR --project-name shopping-cart
 ```
 
 Repetir la configuracion en los entornos de Pages que correspondan: production y preview. En el dashboard de Cloudflare Pages, verificar que los bindings D1/R2 coincidan con `wrangler.jsonc`.
@@ -120,10 +126,18 @@ npm run deploy:prod
 ## Secrets requeridos
 
 - `ADMIN_API_TOKEN`: token bearer para `/api/admin/*`.
+- `PAYMENT_PROVIDER`: `fake` o `mercadopago`.
 - `PAYMENT_PROVIDER_SECRET`: reservado para proveedor real de pagos.
 - `PAYMENT_WEBHOOK_SECRET`: reservado para validar webhooks reales.
+- `MERCADOPAGO_ACCESS_TOKEN`: access token de Mercado Pago.
+- `MERCADOPAGO_WEBHOOK_SECRET`: secret de Webhooks de Mercado Pago.
+- `MERCADOPAGO_NOTIFICATION_URL`: URL publica de `/api/payments/webhook/mercadopago`.
+- `MERCADOPAGO_BACK_URL_BASE`: URL publica del storefront.
+- `MERCADOPAGO_STATEMENT_DESCRIPTOR`: texto corto que puede aparecer en el resumen del pagador.
 
-Los valores reales se cargan con Wrangler o desde el dashboard de Cloudflare. El archivo `.dev.vars.example` solo documenta nombres.
+Los valores reales se cargan con Wrangler o desde el dashboard de Cloudflare. El archivo `.dev.vars.example` solo documenta nombres. Para Checkout Pro, el backend crea una preferencia y devuelve `payment.redirectUrl` para redirigir al comprador.
+
+Ver detalles de integracion en `MERCADOPAGO_INTEGRATION.md`.
 
 ## Checklist de produccion
 

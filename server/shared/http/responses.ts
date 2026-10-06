@@ -6,6 +6,7 @@ const jsonHeaders = {
   "referrer-policy": "strict-origin-when-cross-origin",
   "x-frame-options": "DENY",
   "permissions-policy": "camera=(), microphone=(), geolocation=()",
+  "content-security-policy": "default-src 'none'; base-uri 'none'; frame-ancestors 'none'",
   "cache-control": "no-store",
 };
 
@@ -14,6 +15,7 @@ export const securityHeaders = {
   "referrer-policy": "strict-origin-when-cross-origin",
   "x-frame-options": "DENY",
   "permissions-policy": "camera=(), microphone=(), geolocation=()",
+  "content-security-policy": "default-src 'none'; base-uri 'none'; frame-ancestors 'none'",
 };
 
 export function jsonResponse<TBody>(body: TBody, init?: ResponseInit): Response {
