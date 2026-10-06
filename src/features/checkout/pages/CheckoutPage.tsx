@@ -1,11 +1,12 @@
 import { FormEvent, useMemo, useState } from "react";
-import { LoaderCircle } from "lucide-react";
+import { CheckCircle2, Clock3, LoaderCircle, ShoppingBag, XCircle } from "lucide-react";
 import { LoadingState } from "../../../components/LoadingState";
 import { useCart } from "../../cart/hooks/useCart";
 import { useCheckout } from "../hooks/useCheckout";
 import type { CheckoutRequestDto } from "../types/checkout";
 
 type CheckoutPageProps = {
+  paymentResult?: "success" | "pending" | "failure";
   onBack: () => void;
 };
 
@@ -41,7 +42,7 @@ const currencyFormatter = new Intl.NumberFormat("es-AR", {
   maximumFractionDigits: 0,
 });
 
-export function CheckoutPage({ onBack }: CheckoutPageProps) {
+export function CheckoutPage({ paymentResult, onBack }: CheckoutPageProps) {
   const cart = useCart();
   const checkout = useCheckout();
   const [form, setForm] = useState(initialForm);
@@ -81,6 +82,10 @@ export function CheckoutPage({ onBack }: CheckoutPageProps) {
         onSuccess: () => setIdempotencyKey(crypto.randomUUID()),
       },
     );
+  }
+
+  if (paymentResult) {
+    return <CheckoutResultPage result={paymentResult} onBack={onBack} />;
   }
 
   return (
@@ -182,6 +187,76 @@ export function CheckoutPage({ onBack }: CheckoutPageProps) {
       </section>
     </main>
   );
+}
+
+function CheckoutResultPage({
+  result,
+  onBack,
+}: {
+  result: "success" | "pending" | "failure";
+  onBack: () => void;
+}) {
+  const content = getResultContent(result);
+  const Icon = content.icon;
+
+  return (
+    <main className="brand-page grid place-items-center px-4 py-6 text-zinc-950">
+      <section className="brand-card w-full max-w-2xl rounded-[32px] p-7 text-center sm:p-10">
+        <div className={`mx-auto grid h-16 w-16 place-items-center rounded-3xl ${content.iconBg}`}>
+          <Icon className={`h-9 w-9 ${content.iconColor}`} aria-hidden="true" />
+        </div>
+        <p className="mt-6 text-sm font-extrabold uppercase tracking-wide text-[#b54a55]">
+          Mercado Pago
+        </p>
+        <h1 className="mt-2 text-4xl font-black tracking-normal text-[#243a73] sm:text-5xl">
+          {content.title}
+        </h1>
+        <p className="mx-auto mt-4 max-w-xl text-base leading-7 text-[var(--brand-text)]">
+          {content.detail}
+        </p>
+        <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+          <button
+            className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-[#b54a55] to-[#9c3c48] px-5 text-sm font-extrabold text-white shadow-[var(--brand-shadow)]"
+            type="button"
+            onClick={onBack}
+          >
+            <ShoppingBag className="h-4 w-4" aria-hidden="true" />
+            Volver al catalogo
+          </button>
+        </div>
+      </section>
+    </main>
+  );
+}
+
+function getResultContent(result: "success" | "pending" | "failure") {
+  if (result === "success") {
+    return {
+      icon: CheckCircle2,
+      iconBg: "bg-emerald-50",
+      iconColor: "text-emerald-600",
+      title: "Compra realizada con exito",
+      detail: "Recibimos la confirmacion del pago. En unos minutos el pedido va a quedar actualizado desde Mercado Pago.",
+    };
+  }
+
+  if (result === "pending") {
+    return {
+      icon: Clock3,
+      iconBg: "bg-amber-50",
+      iconColor: "text-amber-600",
+      title: "Pago pendiente",
+      detail: "Mercado Pago todavia esta procesando la operacion. Cuando cambie el estado, el webhook actualizara la orden.",
+    };
+  }
+
+  return {
+    icon: XCircle,
+    iconBg: "bg-red-50",
+    iconColor: "text-red-600",
+    title: "No se completo el pago",
+    detail: "La operacion fue rechazada o cancelada. Podes volver al catalogo y generar una nueva compra cuando quieras.",
+  };
 }
 
 function TextField({
