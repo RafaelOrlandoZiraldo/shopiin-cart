@@ -59,7 +59,7 @@ function AppRoutes() {
   if (route.checkout) {
     return (
       <>
-        <CheckoutPage onBack={() => navigate("/products")} />
+        <CheckoutPage paymentResult={route.paymentResult} onBack={() => navigate("/products")} />
         <CartDrawer
           open={cartOpen}
           onClose={() => setCartOpen(false)}
@@ -163,6 +163,7 @@ function AppRoutes() {
 function getRoute(): {
   admin?: boolean;
   checkout?: boolean;
+  paymentResult?: "success" | "pending" | "failure";
   contact?: boolean;
   catalog?: boolean;
   productId?: string;
@@ -170,10 +171,12 @@ function getRoute(): {
 } {
   const productMatch = window.location.pathname.match(/^\/products\/([^/]+)$/);
   const searchParams = new URLSearchParams(window.location.search);
+  const payment = searchParams.get("payment");
 
   return {
     admin: window.location.pathname === "/admin",
     checkout: window.location.pathname === "/checkout",
+    paymentResult: isPaymentResult(payment) ? payment : undefined,
     contact: window.location.pathname === "/contact",
     catalog: window.location.pathname === "/products",
     productId: productMatch?.[1],
@@ -184,6 +187,10 @@ function getRoute(): {
       pageSize: positiveNumber(searchParams.get("pageSize"), 6),
     },
   };
+}
+
+function isPaymentResult(value: string | null): value is "success" | "pending" | "failure" {
+  return value === "success" || value === "pending" || value === "failure";
 }
 
 function buildCatalogUrl(filters: ProductFilters): string {

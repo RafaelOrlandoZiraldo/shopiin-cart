@@ -16,8 +16,8 @@ const currencyFormatter = new Intl.NumberFormat("es-AR", {
 
 export function ProductCard({ product, onOpen, onAddToCart, adding }: ProductCardProps) {
   return (
-    <article className="group flex h-full min-h-0 flex-col overflow-hidden rounded-[24px] border border-white bg-white shadow-[var(--brand-shadow)] ring-1 ring-[#243a73]/5 transition hover:-translate-y-1 hover:shadow-[var(--brand-shadow-strong)]">
-      <div className="relative flex h-[40%] min-h-[92px] shrink-0 items-center justify-center overflow-hidden bg-[#f4f7fb]">
+    <article className="group flex h-full min-h-0 flex-col overflow-hidden rounded-[22px] border border-white bg-white shadow-[var(--brand-shadow)] ring-1 ring-[#243a73]/5 transition hover:-translate-y-1 hover:shadow-[var(--brand-shadow-strong)]">
+      <div className="relative flex h-[42%] min-h-[104px] shrink-0 items-center justify-center overflow-hidden bg-[#f4f7fb] lg:min-h-[96px]">
         {product.imageUrl ? (
           <img
             className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
@@ -34,13 +34,13 @@ export function ProductCard({ product, onOpen, onAddToCart, adding }: ProductCar
           Disponible
         </span>
       </div>
-      <div className="flex min-h-0 flex-1 flex-col p-4">
+      <div className="flex min-h-0 flex-1 flex-col p-4 lg:p-3.5">
         <h2 className="line-clamp-1 text-base font-black leading-snug text-[#243a73]">{product.name}</h2>
         <p className="mt-1 line-clamp-1 text-sm leading-6 text-[var(--brand-text)]">
           {product.description ?? "Sin descripcion disponible."}
         </p>
-        <div className="mt-auto flex flex-col gap-3 pt-3">
-          <p className="text-xl font-black text-[#b54a55]">
+        <div className="mt-auto flex flex-col gap-2.5 pt-3">
+          <p className="text-xl font-black leading-none text-[#b54a55]">
             {currencyFormatter.format(product.priceCents / 100)}
           </p>
           <div className="grid grid-cols-2 gap-2">
