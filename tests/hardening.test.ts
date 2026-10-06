@@ -22,6 +22,8 @@ describe("security headers", () => {
     expect(headersFile).toContain("frame-ancestors 'none'");
     expect(headersFile).toContain("https://fonts.googleapis.com");
     expect(headersFile).toContain("https://fonts.gstatic.com");
+    expect(headersFile).toContain("script-src 'self' https://static.cloudflareinsights.com");
+    expect(headersFile).toContain("https://cloudflareinsights.com");
     expect(headersFile).toContain("frame-src https://www.google.com https://maps.google.com");
     expect(headersFile).toContain("upgrade-insecure-requests");
   });
