@@ -6,7 +6,7 @@ import { D1CatalogRepository } from "../../server/infrastructure/d1/d1CatalogRep
 import { getD1Database } from "../../server/infrastructure/d1/database";
 import { D1OrderRepository } from "../../server/infrastructure/d1/d1OrderRepository";
 import { D1PaymentRepository } from "../../server/infrastructure/d1/d1PaymentRepository";
-import { FakePaymentProvider } from "../../server/infrastructure/payments/fakePaymentProvider";
+import { createPaymentProvider } from "../../server/infrastructure/payments/paymentProviderFactory";
 import { jsonResponse } from "../../server/shared/http/responses";
 import { parseDto } from "../../server/shared/http/validation";
 import { readJsonBody } from "./_shared/httpInputs";
@@ -28,7 +28,7 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = withErrorHandling(wit
       new D1CatalogRepository(db),
       new D1OrderRepository(db),
       new D1PaymentRepository(db),
-      new FakePaymentProvider(),
+      createPaymentProvider(env),
       {
         cartSessionId: headers.cartSessionId,
         idempotencyKey: headers.idempotencyKey,

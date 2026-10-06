@@ -130,9 +130,17 @@ export function CheckoutPage({ onBack }: CheckoutPageProps) {
               </p>
             ) : null}
             {orderMessage ? (
-              <p className="mt-5 rounded-xl border border-[#243a73]/20 bg-[#243a73]/5 px-3 py-2 text-sm font-bold text-[#243a73]">
-                {orderMessage}
-              </p>
+              <div className="mt-5 rounded-xl border border-[#243a73]/20 bg-[#243a73]/5 px-3 py-3 text-sm font-bold text-[#243a73]">
+                <p>{orderMessage}</p>
+                {checkout.data?.payment.redirectUrl ? (
+                  <a
+                    className="mt-3 inline-flex rounded-xl bg-[#243a73] px-4 py-3 text-sm font-extrabold text-white"
+                    href={checkout.data.payment.redirectUrl}
+                  >
+                    Continuar a Mercado Pago
+                  </a>
+                ) : null}
+              </div>
             ) : null}
 
             <button

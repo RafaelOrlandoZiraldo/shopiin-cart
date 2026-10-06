@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
 import { withRateLimit } from "../functions/api/_shared/rateLimit";
 import type { CloudflareEnv } from "../server/infrastructure/cloudflare/bindings";
 import { jsonResponse } from "../server/shared/http/responses";
@@ -10,6 +11,19 @@ describe("security headers", () => {
     expect(response.headers.get("x-content-type-options")).toBe("nosniff");
     expect(response.headers.get("x-frame-options")).toBe("DENY");
     expect(response.headers.get("referrer-policy")).toBe("strict-origin-when-cross-origin");
+    expect(response.headers.get("content-security-policy")).toContain("default-src 'none'");
+  });
+
+  it("defines browser security headers for Cloudflare Pages assets", () => {
+    const headersFile = readFileSync("public/_headers", "utf8");
+
+    expect(headersFile).toContain("Strict-Transport-Security");
+    expect(headersFile).toContain("Content-Security-Policy");
+    expect(headersFile).toContain("frame-ancestors 'none'");
+    expect(headersFile).toContain("https://fonts.googleapis.com");
+    expect(headersFile).toContain("https://fonts.gstatic.com");
+    expect(headersFile).toContain("frame-src https://www.google.com https://maps.google.com");
+    expect(headersFile).toContain("upgrade-insecure-requests");
   });
 });
 
