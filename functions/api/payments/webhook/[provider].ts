@@ -7,7 +7,10 @@ import type { CloudflareEnv } from "../../../../server/infrastructure/cloudflare
 import { getD1Database } from "../../../../server/infrastructure/d1/database";
 import { D1OrderRepository } from "../../../../server/infrastructure/d1/d1OrderRepository";
 import { D1PaymentRepository } from "../../../../server/infrastructure/d1/d1PaymentRepository";
-import { parseMercadoPagoWebhook } from "../../../../server/infrastructure/payments/mercadoPagoWebhook";
+import {
+  isMercadoPagoWebhookConnectivityTest,
+  parseMercadoPagoWebhook,
+} from "../../../../server/infrastructure/payments/mercadoPagoWebhook";
 import { AppError } from "../../../../server/shared/http/appError";
 import { jsonResponse } from "../../../../server/shared/http/responses";
 import { parseDto } from "../../../../server/shared/http/validation";
@@ -22,6 +25,11 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = withErrorHandling(wit
     const { provider } = parseParams(paymentProviderParamsSchema, params);
     const rawBody = await request.text();
     const body = rawBody ? JSON.parse(rawBody) : {};
+    if (provider === "mercadopago" && isMercadoPagoWebhookConnectivityTest(body)) {
+      console.info("payment_webhook_connectivity_test", { provider });
+      return jsonResponse({ received: true, test: true }, { status: 200 });
+    }
+
     const webhook = provider === "mercadopago"
       ? await parseMercadoPagoWebhook({
           request,

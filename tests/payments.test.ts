@@ -4,7 +4,10 @@ import type { Payment } from "../server/domain/payments/payment";
 import { handlePaymentWebhook } from "../server/application/payments/handlePaymentWebhook";
 import { FakePaymentProvider } from "../server/infrastructure/payments/fakePaymentProvider";
 import { MercadoPagoPaymentProvider } from "../server/infrastructure/payments/mercadoPagoPaymentProvider";
-import { parseMercadoPagoWebhook } from "../server/infrastructure/payments/mercadoPagoWebhook";
+import {
+  isMercadoPagoWebhookConnectivityTest,
+  parseMercadoPagoWebhook,
+} from "../server/infrastructure/payments/mercadoPagoWebhook";
 import type { OrderRepository } from "../server/repositories/orderRepository";
 import type {
   CreatePaymentInput,
@@ -93,6 +96,19 @@ describe("payment provider", () => {
 });
 
 describe("Mercado Pago webhook", () => {
+  it("detects Mercado Pago dashboard connectivity test payloads", () => {
+    expect(isMercadoPagoWebhookConnectivityTest({
+      action: "payment.updated",
+      api_version: "v1",
+      data: { id: "123456" },
+      date_created: "2021-11-01T02:02:02Z",
+      id: "123456",
+      live_mode: false,
+      type: "payment",
+      user_id: 493860664,
+    })).toBe(true);
+  });
+
   it("validates signature, fetches payment details, and maps approved payments", async () => {
     const secret = "webhook-secret";
     const requestId = "request-id";
